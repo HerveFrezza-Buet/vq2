@@ -1,5 +1,5 @@
 # vq2
-Generic programming for vector quantization
+C++ generic programming for vector quantization
 
 # Installation
 
