@@ -435,6 +435,7 @@ namespace vq2 {
       /**
        * This performs several epochs.
        * @param n the number of epochs
+       * @param dynamic_topology true means that topology (number of vertices and edges) can change.
        * @param samples a class that provides data (it may re-suffle at each call of begin).
        * @param sample_of A functor that gets the sample from the current data.
        */
@@ -452,14 +453,15 @@ namespace vq2 {
 		 GNGT_EVOLUTION& evolution,
 		 GNGT_SAMPLING& samples,
 		 const SAMPLE_OF& sample_of,
-		 int n) {
+		 int n,
+		 bool dynamic_topology = true) {
 	for(int e = 0; e < n; ++e) {
 	  auto iter = samples.begin();
 	  auto end = samples.end();
 	  open_epoch(g,evolution);
 	  for(;iter != end; ++iter) 
-	    submit(params,g,unit_distance,unit_learn,sample_of(*iter),true);
-	  close_epoch(params,g,unit_learn,evolution,true);
+	    submit(params,g,unit_distance,unit_learn,sample_of(*iter),dynamic_topology);
+	  close_epoch(params,g,unit_learn,evolution,dynamic_topology);
 	}
       }
 
