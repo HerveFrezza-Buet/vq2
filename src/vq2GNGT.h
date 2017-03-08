@@ -82,6 +82,7 @@ namespace vq2 {
 	  double _max = min + (1-param.margin())*width;
 	  
 	  double nt = param.nbSamples()*param.target();
+	  
 	  if(nt < _min)
 	    res = 1;
 	  else if(nt > _max) 
@@ -115,24 +116,30 @@ namespace vq2 {
 	 * epoch.
 	 */
 	int n;
+
+	/**
+	 * false means that, at least once during last epoch, the neuron has won or has been the second closest. 
+	 */
+	bool useless;
 	
 	typedef typename unit::Base<PROTOTYPE>::prototype_type prototype_type;
 
 	Unit(void) 
 	  : unit::Base<PROTOTYPE>(), 
-	    e(0), n(0) {}
+	  e(0), n(0), useless(true) {}
 	Unit(const Unit<PROTOTYPE>& copy) 
 	  : unit::Base<PROTOTYPE>(copy), 
-	    e(copy.e), n(copy.n) {}
+	  e(copy.e), n(copy.n), useless(copy.useless) {}
 	Unit(const prototype_type& proto) : 
 	  unit::Base<PROTOTYPE>(proto), 
-	  e(0), n(0) {}
+	    e(0), n(0), useless(true) {}
 
 	Unit<PROTOTYPE>& operator=(const Unit& copy) {
 	  if(this != &copy) {
 	    this->unit::Base<PROTOTYPE>::operator=(copy);
-	    e = copy.e;
-	    n = copy.n;
+	    e      = copy.e;
+	    n      = copy.n;
+	    useless = copy.useless;
 	  }
 	  return *this;
 	}
@@ -140,8 +147,9 @@ namespace vq2 {
 	Unit<PROTOTYPE>& operator=(const prototype_type& proto) {
 	  
 	  this->unit::Base<PROTOTYPE>::operator=(proto);
-	  e = 0;
-	  n = 0;
+	  e      = 0;
+	  n      = 0;
+	  useless = true;
 	  return *this;
 	}
 
@@ -162,8 +170,9 @@ namespace vq2 {
 	public:
 	  ClearNeuronStats(void) {}
 	  bool operator()(VERTEX& v) {
-	    v.value.n = 0;
-	    v.value.e = 0;
+	    v.value.n      = 0;
+	    v.value.e      = 0;
+	    v.value.useless = true;
 	    return false; 
 	  }
 	};
@@ -252,8 +261,9 @@ namespace vq2 {
 	  }
 	  bool operator()(REF_VERTEX& ref) {
 	    UNIT& proto = (*ref).value;
-	    if(proto.n == 0)
+	    if(proto.useless) {
 	      return true;
+	    }
 	    
 	    nb++;
 	    stats += proto.e;
@@ -341,6 +351,10 @@ namespace vq2 {
 	std::pair<typename GRAPH::ref_vertex_type,
 		  typename GRAPH::ref_vertex_type> two_closest = vq2::algo::twoClosest(g,distance,
 										       xi,closest_dists);
+
+	// Set them as useless.
+	(*(two_closest.first )).value.useless = false;
+	(*(two_closest.second)).value.useless = false;
 
 	if(dynamic_topology) {
 	  // Update edges.
