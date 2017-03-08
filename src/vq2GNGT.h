@@ -261,24 +261,25 @@ namespace vq2 {
 	  }
 	  bool operator()(REF_VERTEX& ref) {
 	    UNIT& proto = (*ref).value;
-	    if(proto.useless) {
+	    if(proto.useless)
 	      return true;
-	    }
-	    
-	    nb++;
-	    stats += proto.e;
 
-
-	    if(proto.e < mine || mine < 0) {
-	      mine = proto.e;
-	      min = ref;
-	    }
-
-	    // Not elseif... is a single neuron is there
-	    // >= in case of e=0...
-	    if(proto.e >= maxe) {
-	      maxe = proto.e;
-	      max = ref;
+	    if(proto.n > 0) {// if the unit is not a dead unit, placed in an empty region
+	      nb++;
+	      stats += proto.e;
+	      
+	      
+	      if(proto.e < mine || mine < 0) {
+		mine = proto.e;
+		min = ref;
+	      }
+	      
+	      // Not elseif... if a single neuron is there
+	      // >= in case of e=0...
+	      if(proto.e >= maxe) {
+		maxe = proto.e;
+		max = ref;
+	      }
 	    }
 	    return false;
 	  }
