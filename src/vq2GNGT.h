@@ -54,7 +54,7 @@ namespace vq2 {
 	EVOLUTION_PARAM& param;
 	
 	Evolution(EVOLUTION_PARAM& evolution_param)
-	  : nt(0), min(0), max(0), 
+	  : nt(evolution_param.target()*evolution_param.nbSamples()), min(0), max(0), 
 	    first_run(true),
 	    param(evolution_param){}
 
@@ -96,11 +96,11 @@ namespace vq2 {
 
 	friend std::ostream& operator<<(std::ostream& os, const Evolution<EVOLUTION_PARAM>& evolution) {
 	  if (evolution.first_run){
-	    os << "not started";
+	    os << "(nt = " << evolution.nt << ", not started) ";
 	    return os;
 	  }
 	  bool inside = evolution.min <= evolution.nt && evolution.nt <= evolution.max;
-	  os << '(' << evolution.nt;
+	  os << "(nt = " << evolution.nt;
 	  if(inside)
 	    os << " in";
 	  else
