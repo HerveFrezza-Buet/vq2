@@ -43,6 +43,9 @@ namespace vq2 {
     namespace gngt {
       template<typename EVOLUTION_PARAM>
       class Evolution {
+      private:
+	double nt; // for display mainly
+	
       public:
 	
 	std::vector<double> disto_distrib;
@@ -81,13 +84,25 @@ namespace vq2 {
 	  double _min = min + param.margin()*width;
 	  double _max = min + (1-param.margin())*width;
 	  
-	  double nt = param.nbSamples()*param.target();
+	  nt = param.nbSamples()*param.target();
 	  
 	  if(nt < _min)
 	    res = 1;
 	  else if(nt > _max) 
 	    res = -1;
 	  return res;
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const Evolution<EVOLUTION_PARAM>& evolution) {
+	  bool inside = evolution.min <= evolution.nt && evolution.nt <= evolution.max;
+	  os << '(' << evolution.nt;
+	  if(inside)
+	    os << " in";
+	  else
+	    os << " outside";
+	  os << " [" << evolution.min << ", " << evolution.max << "], ratio = " << evolution.nt*2/(evolution.min+evolution.max) << ')';
+	  
+	  return os;
 	}
       };
       

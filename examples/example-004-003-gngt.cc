@@ -316,6 +316,8 @@ int main(int argc, char* argv[]) {
       vq2::algo::gngt::close_epoch(params,g,
 				   unit_learn,
 				   evolution,true);
+
+      std::cout << evolution << std::endl;
       gnuplot << std::setw(3) << e
 	      << ' ' << GNUPLOT_TARGET_SCALE*TARGET*NB_SAMPLES
 	      << ' ' << std::setw(3) << evolution.disto_distrib.size() 
