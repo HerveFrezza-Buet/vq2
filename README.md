@@ -1,5 +1,7 @@
 # vq2
-C++ generic programming for vector quantization
+C++ generic programming for vector quantization (obsolete)
+
+Consider the vq3 library for up-to-date development.
 
 # Installation
 
